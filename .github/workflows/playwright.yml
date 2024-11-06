@@ -1,59 +1,38 @@
-name: CI
+name: Playwright Tests
 
-# Controls when the workflow will run
 on:
   push:
-    branches: [ "main" ]
+    branches: [main, master]
   pull_request:
-    branches: [ "main" ]
-
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
+    branches: [main, master]
 
 jobs:
-  # This workflow contains a single job called "build"
-  build:
-    # The type of runner that the job will run on
+  test:
+    timeout-minutes: 60
     runs-on: ubuntu-latest
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v4
+    - uses: actions/checkout@v4
 
-      # Set up Python environment
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.8'  # You can use any version you prefer
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
 
-      # Install dependencies
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt  # Make sure you have a requirements.txt with the dependencies
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
 
-      # Install Playwright and browsers
-      - name: Install Playwright and Browsers
-        run: |
-          pip install playwright
-          python -m playwright install
+    - name: Ensure browsers are installed
+      run: python -m playwright install --with-deps
 
-      # Run Playwright tests
-      - name: Run Playwright tests with pytest
-        run: |
-          pytest --maxfail=1 --disable-warnings --capture=no --html=report.html
+    - name: Run tests with Playwright
+      run: |
+        pytest --maxfail=1 --disable-warnings --capture=no --html=report.html
 
-      # Upload the test report as an artifact
-      - name: Upload Test Report
-        uses: actions/upload-artifact@v3
-        with:
-          name: test-report
-          path: report.html
-
-      # Optionally, you can add notifications for the result of the tests
-      # - name: Send notification if tests fail
-      #   run: |
-      #     if [ $? -ne 0 ]; then
-      #       echo "Tests failed! Please check the details."
-      #     fi
+    - name: Upload test results as artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: playwright-test-report
+        path: report.html

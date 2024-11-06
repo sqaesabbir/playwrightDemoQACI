@@ -1,5 +1,4 @@
 import re
-import time
 import pytest
 from playwright.sync_api import sync_playwright, expect
 
@@ -23,9 +22,7 @@ def page(browser):
 def test_text_box_interaction(page):
     # Perform actions related to the Text Box test without reloading the base URL
     page.get_by_text("Elements").click()
-    time.sleep(2)
     page.get_by_text("Text Box").click()
-    time.sleep(3)
 
     # Fill in the text box form
     page.get_by_role("textbox", name="Full Name").fill("Md.SABBIR HOSSAIN")
@@ -33,7 +30,9 @@ def test_text_box_interaction(page):
     page.locator("#currentAddress").fill("123 Main St, Apt 4B, New York, NY 10001")
     page.locator("#permanentAddress").fill("123 Main St, Apt 4B, New York, NY 10001")
     page.get_by_role("button").click()
-    time.sleep(2)
+
+    # Wait for confirmation message or specific element after submission
+    page.locator('text="Form submitted successfully"').wait_for(timeout=5000)
 
 def test_check_box_and_radio_button(page):
     # Continue from the existing page state for Check Box and Radio Button test
@@ -47,6 +46,6 @@ def test_check_box_and_radio_button(page):
 
     # Interact with the Radio Button
     radio_button = page.get_by_text("Radio Button")
-    expect(radio_button).to_be_visible()
     radio_button.click()
-    time.sleep(2)
+    page.locator('text="Impressive"').wait_for(timeout=5000)
+    expect(page.locator('text="Impressive"')).to_be_visible()
