@@ -40,3 +40,4 @@ jobs:
       with:
         name: playwright-test-report
         path: report.html
+
