@@ -25,11 +25,12 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
-    - name: Ensure browsers are installed
+    - name: Install Playwright and Playwright Test Runner
       run: |
-        python -m playwright install --with-deps
+        python -m playwright install
+        pip install pytest-playwright
 
-    - name: Run tests with Playwright
+    - name: Run Playwright tests
       run: |
         pytest --maxfail=1 --disable-warnings --capture=no
 
