@@ -33,7 +33,7 @@ jobs:
 
     - name: Run tests with Playwright
       run: |
-        pytest --maxfail=1 --disable-warnings --capture=no --html=report.html
+        pytest main.py --maxfail=1 --disable-warnings --capture=no --html=report.html
 
     - name: Upload test results as artifacts
       uses: actions/upload-artifact@v4
