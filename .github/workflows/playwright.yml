@@ -1,29 +1,44 @@
 name: Playwright Tests
+
 on:
   push:
-    branches: [ main, master ]
+    branches: [main, master]
   pull_request:
-    branches: [ main, master ]
+    branches: [main, master]
+
 jobs:
   test:
     timeout-minutes: 60
     runs-on: ubuntu-latest
+
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
         python-version: '3.11'
+
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
+
     - name: Ensure browsers are installed
-      run: python -m playwright install --with-deps
+      run: |
+        python -m playwright install --with-deps
+
     - name: Run tests with Playwright
-      run: pytest --tracing=retain-on-failure
-    - uses: actions/upload-artifact@v4
-      if: ${{ !cancelled() }}
+      run: |
+        pytest --maxfail=1 --disable-warnings --capture=no
+
+    - name: Ensure test-results directory exists
+      run: |
+        mkdir -p test-results
+
+    - name: Upload test results as artifacts
+      uses: actions/upload-artifact@v4
       with:
-        name: playwright-traces
+        name: playwright-test-results
         path: test-results/
