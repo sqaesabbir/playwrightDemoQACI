@@ -14,6 +14,8 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # Fetch full history to avoid issues
 
     - name: Set up Python
       uses: actions/setup-python@v4
@@ -25,21 +27,16 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
-    - name: Install Playwright and Playwright Test Runner
+    - name: Ensure browsers are installed
       run: |
-        python -m playwright install
-        pip install pytest-playwright
+        python -m playwright install --with-deps
 
-    - name: Run Playwright tests
+    - name: Run tests with Playwright
       run: |
-        pytest --maxfail=1 --disable-warnings --capture=no
-
-    - name: Ensure test-results directory exists
-      run: |
-        mkdir -p test-results
+        pytest --maxfail=1 --disable-warnings --capture=no --html=report.html
 
     - name: Upload test results as artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: playwright-test-results
-        path: test-results/
+        name: playwright-test-report
+        path: report.html
