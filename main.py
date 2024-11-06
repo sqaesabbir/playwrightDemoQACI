@@ -14,7 +14,6 @@ def browser():
         yield browser
         browser.close()
 
-
 @pytest.fixture(scope="session")
 def page(browser):
     # Open the base page only once in the session scope
