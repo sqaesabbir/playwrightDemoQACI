@@ -2,22 +2,23 @@ name: Playwright Tests
 
 on:
   push:
-    branches: [main, master]
+    branches: [main, master]  # You can specify more branches if needed
   pull_request:
     branches: [main, master]
 
 jobs:
   test:
     timeout-minutes: 60
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest  # You can use macos-latest or windows-latest if preferred
 
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout repository
+      uses: actions/checkout@v4
 
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
-        python-version: '3.11'
+        python-version: '3.11'  # Use the Python version you're working with
 
     - name: Install dependencies
       run: |
@@ -25,7 +26,8 @@ jobs:
         pip install -r requirements.txt
 
     - name: Ensure browsers are installed
-      run: python -m playwright install --with-deps
+      run: |
+        python -m playwright install --with-deps
 
     - name: Run tests with Playwright
       run: |
