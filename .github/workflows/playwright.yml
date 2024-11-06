@@ -32,10 +32,11 @@ jobs:
         python -m playwright install --with-deps
 
     - name: Run tests with Playwright
-      run: pytest --tracing=retain-on-failure
+      run: |
+        pytest --maxfail=1 --disable-warnings --capture=no
 
     - name: Upload test results as artifacts
       uses: actions/upload-artifact@v4
       with:
         name: playwright-test-report
-        path: report.html
+        path: pytest-report.txt
