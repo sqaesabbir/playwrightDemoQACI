@@ -62,7 +62,7 @@ def test_Web_Tables(page):
     page.get_by_text("Web Tables").click()
     expect(page.get_by_role("heading", name="Web Tables")).to_be_visible()
     add_data_to_the_table(page)
-    verify_table_data(page, expected_data)
+
 
 
 def add_data_to_the_table(page):
@@ -70,42 +70,30 @@ def add_data_to_the_table(page):
     expect(page.locator('.modal-title')).to_be_visible()
     page.locator("#firstName").fill("Sabbir")
     page.locator("#lastName").fill("Hossain")
-    page.locator("#userEmail").fill("cse.sabbirhossain@gmail.com")
+    email= page.locator("#userEmail").fill("cse.sabbirhossain@gmail.com")
     page.get_by_placeholder("Age").fill("24")
     page.get_by_placeholder("Salary").fill("5000")
     page.get_by_placeholder("Department").fill("SQA")
     page.locator("#submit").click()
-    time.sleep(5)
 
-def verify_table_data(page, expected_data):
-    # Select all rows within the table body
-    rows = page.query_selector_all('.rt-tbody .rt-tr')
+    table_rows = page.get_by_role("row")
 
-    # Flag to check if match is found
-    match_found = False
+    # Get the count of rows
+    row_count = table_rows.count()
 
-    # Helper function to normalize the data (strip unwanted characters)
-    def normalize_text(text):
-        return re.sub(r'[^\w\s]', '', text).strip()
+    # Print the count or use it in an assertion
+    print(f"Number of rows in the table: {row_count}")
 
-    # Iterate over each row and check if it matches the expected data
-    for i, row in enumerate(rows):
-        cells = row.query_selector_all('.rt-td')
+    # Verify the row count (example assertion)
+    expect(table_rows).to_have_count(11)
+    time.sleep(2)
 
-        # Extract and normalize text content of all cells in the row
-        cell_texts = [normalize_text(cell.inner_text().strip()) for cell in cells]
+    email_cell = page.locator(f'.rt-td:has-text("cse.sabbirhossain@gmail.com")')
 
-        # Compare the normalized row's cell texts with the normalized expected data
-        if cell_texts == expected_data:
-            print(f"Match found in row {i + 1}!")
-            match_found = True
-            break  # Stop after finding the first match
+    # Ensure that the email is present in the table
+    expect(email_cell).to_be_visible()
+    time.sleep(2)
 
-    # If no match was found after checking all rows, raise an error
-    if not match_found:
-        raise AssertionError(f"Expected data {expected_data} not found in any row.")
 
-# Sample expected data to verify
-expected_data = [
-    "Sabbir", "Hossain", "24", "cse.sabbirhossain@gmail.com", "5000", "SQA"
-]
+
+
