@@ -72,9 +72,7 @@ def add_data_to_the_table(page):
     page.locator("#lastName").fill("Hossain")
     page.locator("#userEmail").fill("cse.sabbirhossain@gmail.com")
     page.get_by_placeholder("Age").fill("24")
-
     page.get_by_placeholder("Salary").fill("5000")
-
     page.get_by_placeholder("Department").fill("SQA")
     page.locator("#submit").click()
     time.sleep(5)
