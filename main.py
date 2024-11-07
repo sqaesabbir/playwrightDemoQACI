@@ -9,7 +9,7 @@ from playwright.sync_api import sync_playwright, expect
 def browser():
     # Initialize the browser session
     with sync_playwright() as playwright:
-        browser = playwright.chromium.launch(headless=False)
+        browser = playwright.chromium.launch(headless=True)
         context = browser.new_context()
         context.tracing.start(screenshots=True, snapshots=True)
         context.tracing.stop(path="trace.zip")
