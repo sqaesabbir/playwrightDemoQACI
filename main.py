@@ -94,6 +94,78 @@ def add_data_to_the_table(page):
     expect(email_cell).to_be_visible()
     time.sleep(2)
 
+def test_button(page):
+    page.get_by_text("Buttons").click()
+    # expect(page.get_by_role("heeding", name="Buttons")).to_be_visible()
+
+    page.locator("#doubleClickBtn").dblclick()
+    expect(page.get_by_text("You have done a double click")).to_be_visible()
+    page.reload(wait_until="domcontentloaded")
+
+    page.locator("#rightClickBtn").click(button="right")
+    expect(page.get_by_text("You have done a right click")).to_be_visible()
+
+    page.reload(wait_until="domcontentloaded")
+
+    page.locator('button[class="btn btn-primary"] >> text="Click Me"').click()
+
+    expect(page.get_by_text("You have done a dynamic click")).to_be_visible()
+
+def test_link(page):
+    # Navigate to the page containing the "Links" text
+    page.get_by_text("Links", exact=True).click()
+
+    # Wait for the new page to open when the link is clicked
+    with page.context.expect_page() as new_page_info:
+        page.locator("#simpleLink").click()  # Clicks on the link that opens a new page
+
+    # Get the newly opened page
+    new_page = new_page_info.value
+    new_page.wait_for_load_state()  # Wait for the new page to load
+
+    # Perform any checks or actions on the new page
+    print(new_page.url)  # Print the URL of the new page for verification
+    new_page.close()
+
+    with page.context.expect_page() as new_page_info:
+        page.locator("#dynamicLink").click()
+    new_page = new_page_info.value
+    new_page.wait_for_load_state()
+    print(new_page.url)
+    new_page.close()
+
+    page.get_by_text("Created").click()
+    expect(page.get_by_text("Link has responded with staus 201 and status text Created")).to_be_visible()
+
+    # Click the element with the text "No Content"
+    page.get_by_text("No Content").click()
+
+    # Check that the text "Link has responded with status 204 and status text No Content" is visible
+    expect(page.get_by_text("Link has responded with staus 204 and status text No Content")).to_be_visible()
+
+    # Check that the locator with ID "#linkResponse" is visible and contains "204"
+    locator = page.locator("#linkResponse")
+    expect(locator).to_be_visible()
+
+    # Optionally, check if the text "204" is within the element's content
+    assert "204" in locator.text_content(), "Expected '204' in the link response"
+
+    page.get_by_text("Moved").click()
+    expect(page.get_by_text("Link has responded with staus 301 and status text Moved Permanently")).to_be_visible()
+
+    page.get_by_text("Bad Request").click()
+    expect(page.get_by_text("Link has responded with staus 400 and status text Bad Request")).to_be_visible()
+
+    page.get_by_text("Unauthorized").click()
+    expect(page.get_by_text("Link has responded with staus 401 and status text Unauthorized")).to_be_visible()
+
+    page.get_by_text("Forbidden").click()
+    expect(page.get_by_text("Link has responded with staus 403 and status text Forbidden")).to_be_visible()
+
+    page.get_by_text("Not Found").click()
+    expect(page.get_by_text("Link has responded with staus 404 and status text Not Found")).to_be_visible()
+
+
 
 
 
